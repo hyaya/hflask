@@ -2,7 +2,7 @@
 #all the import
 import sqlite3
 from flask import Flask,request,session,g,redirect,url_for,abort,render_template,flash
-
+#
 #all configuration
 DATABASE = 'tmp\order.db'
 DEBUG = True    #开启调试模式，允许执行服务器上的代码
