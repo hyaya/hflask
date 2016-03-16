@@ -1,10 +1,11 @@
 #coding:utf8
 #all the import
-import sqlite3
+import sqlite3,os
 from flask import Flask,request,session,g,redirect,url_for,abort,render_template,flash
+
 #-----------
 #all configuration
-DATABASE = 'tmp\order.db'
+DATABASE = r"E:\Codes\hflask\tmp\order.py"
 DEBUG = True    #开启调试模式，允许执行服务器上的代码
 SECRET_KEY = 'order key'    #用于保持客户端的会话安全
 USERNAME = 'admin'
@@ -53,7 +54,8 @@ def logout():
     return redirect(url_for('show_entries'))
 #添加一个方便连接指定数据库的方法
 def connect_db():
-    return sqlite3.connect(app.config['DATABASE'])
+    conn = sqlite3.connect(app.config['DATABASE'])
+    return conn
 
 #创建一个用来初始化数据库的函数
 from contextlib import closing
@@ -63,16 +65,13 @@ def init_db():
             db.cursor().executescript(f.read())
         db.commit()
 
-#请求数据库连接
+# 请求数据库连接
 @app.before_request
-def before_request():#此函数会再请求之前进行调用
+def before_request():
     g.db = connect_db()
-@app.after_request
-def after_request(exception):#在请求之后进行调用，切传递发送给客户端响应对象
-    pass
 @app.teardown_request
-def teardown_request(exception):#响应对象结构后调用
-    db = getattr(g,'db',None)
+def teardown_request(exception):
+    db = getattr(g, 'db', None)
     if db is not None:
         db.close()
     g.db.close()
